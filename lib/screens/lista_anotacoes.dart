@@ -80,6 +80,7 @@ class _ItemAnotacao extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        leading: Icon(Icons.note),
         title: Text(
           anotacao.titulo,
           style: TextStyle(fontSize: 24.0),
