@@ -44,7 +44,7 @@ class _ListaAnotacoesState extends State<ListaAnotacoes> {
               return ListView.builder(
                 itemBuilder: (context, index) {
                   final Anotacao anotacao = anotacoes[index];
-                  return _ItemAnotacao(anotacao);
+                  return itemAnotacao(context, anotacao);
                 },
                 itemCount: anotacoes.length,
               );
@@ -63,21 +63,13 @@ class _ListaAnotacoesState extends State<ListaAnotacoes> {
           );
         },
       ),
-      bottomNavigationBar: BottomAppBar(
-          color: Colors.redAccent,
-          child: Container(height: 40.0)),
+      bottomNavigationBar:
+          BottomAppBar(color: Colors.redAccent, child: Container(height: 40.0)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
-}
 
-class _ItemAnotacao extends StatelessWidget {
-  final Anotacao anotacao;
-
-  _ItemAnotacao(this.anotacao);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget itemAnotacao(BuildContext context, Anotacao anotacao) {
     return Card(
       child: ListTile(
         leading: Icon(Icons.note),
@@ -88,6 +80,39 @@ class _ItemAnotacao extends StatelessWidget {
         subtitle: Text(
           anotacao.observacao,
           style: TextStyle(fontSize: 16.0),
+        ),
+        onTap: () {},
+        trailing: GestureDetector(
+          child: Icon(Icons.delete_outline),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Apagar nota?'),
+                  content: Text('Esta ação é irreversível'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Não'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    FlatButton(
+                      child: Text('Sim'),
+                      onPressed: () {
+                        _anotacaoDao.delete(anotacao.id);
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _anotacaoDao.findAll();
+                        });
+                      },
+                    ),
+                  ],
+                  elevation: 24.0,
+                );
+              },
+              barrierDismissible: true,
+            );
+          },
         ),
       ),
     );
