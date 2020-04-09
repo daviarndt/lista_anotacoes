@@ -2,17 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:lista_anotacoes/database/dao/anotacao_dao.dart';
 import 'package:lista_anotacoes/models/anotacao.dart';
 
-class FormAnotacao extends StatelessWidget {
-  final TextEditingController _titulo = TextEditingController();
-  final TextEditingController _observacao = TextEditingController();
+class FormAnotacao extends StatefulWidget {
+  final Anotacao anotacao;
+
+  FormAnotacao({this.anotacao});
+
+  @override
+  _FormAnotacaoState createState() => _FormAnotacaoState();
+}
+
+class _FormAnotacaoState extends State<FormAnotacao> {
+  String tituloAppBar = 'Nova Anotação';
+
+  TextEditingController _titulo = TextEditingController();
+  TextEditingController _observacao = TextEditingController();
 
   final AnotacaoDao _anotacaoDao = AnotacaoDao();
+
+  @override
+  void initState() {
+    _titulo = TextEditingController();
+    _observacao = TextEditingController();
+    if (widget.anotacao != null) {
+      tituloAppBar = 'Ver Anotação';
+      _titulo = TextEditingController(
+        text: widget.anotacao.titulo,
+      );
+      _observacao = TextEditingController(
+        text: widget.anotacao.observacao,
+      );
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nova Anotação'),
+        title: Text(tituloAppBar),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -29,8 +56,8 @@ class FormAnotacao extends StatelessWidget {
               child: TextField(
                 controller: _observacao,
                 decoration: InputDecoration(
-                    labelText: 'Observação',
-                    border: OutlineInputBorder(),
+                  labelText: 'Observação',
+                  border: OutlineInputBorder(),
                 ),
                 style: TextStyle(fontSize: 24),
                 maxLines: 10,
@@ -57,8 +84,15 @@ class FormAnotacao extends StatelessWidget {
     final String observacao = _observacao.text;
 
     if (titulo.isNotEmpty) {
-      final Anotacao novaAnotacao = Anotacao(0, titulo, observacao);
-      _anotacaoDao.save(novaAnotacao).then((id) => Navigator.pop(context));
+      if (widget.anotacao != null) {
+        widget.anotacao.titulo = _titulo.text;
+        widget.anotacao.observacao = _observacao.text;
+        _anotacaoDao.update(widget.anotacao);
+      } else {
+        final Anotacao novaAnotacao = Anotacao(0, titulo, observacao);
+        _anotacaoDao.save(novaAnotacao);
+      }
+      Navigator.pop(context);
     } else {
       _mostraSnackBar(context);
     }

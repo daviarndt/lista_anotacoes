@@ -22,6 +22,11 @@ class _ListaAnotacoesState extends State<ListaAnotacoes> {
         initialData: List(),
         future: _anotacaoDao.findAll(),
         builder: (context, snapshot) {
+          if (snapshot.data.length < 1) {
+            return Center(
+              child: Text('Sem anotações, crie uma agora!'),
+            );
+          }
           switch (snapshot.connectionState) {
             case ConnectionState.none:
               break;
@@ -81,7 +86,15 @@ class _ListaAnotacoesState extends State<ListaAnotacoes> {
           anotacao.observacao,
           style: TextStyle(fontSize: 16.0),
         ),
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FormAnotacao(
+                anotacao: anotacao,
+              ),
+            ),
+          );
+        },
         trailing: GestureDetector(
           child: Icon(Icons.delete_outline),
           onTap: () {
