@@ -8,7 +8,8 @@ class KeepIt extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: ListaAnotacoes(),
+      darkTheme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
-
