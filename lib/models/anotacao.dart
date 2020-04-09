@@ -1,6 +1,7 @@
 class Anotacao {
+  int id;
   String titulo;
   String observacao;
 
-  Anotacao(this.titulo, this.observacao);
+  Anotacao(this.id,  this.titulo, this.observacao);
 }
